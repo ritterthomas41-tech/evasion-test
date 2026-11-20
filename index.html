@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>L'Evasion</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #070606; }
+    #unity-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; touch-action: none; outline: none; background: #070606; }
+    #chargement { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+                  color: #efe7dc; font: 700 20px system-ui, sans-serif; letter-spacing: .04em; }
+    #barre { width: min(60vw, 360px); height: 10px; background: #2a2420; border-radius: 6px; overflow: hidden; }
+    #barre i { display: block; height: 100%; width: 0; background: #d9a514; }
+    body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="chargement"><span>L'Evasion</span><div id="barre"><i></i></div></div>
+  <script src="Build/Web.loader.js"></script>
+  <script>
+    const canvas = document.querySelector('#unity-canvas');
+    createUnityInstance(canvas, {
+      dataUrl: 'Build/Web.data.unityweb',
+      frameworkUrl: 'Build/Web.framework.js.unityweb',
+      codeUrl: 'Build/Web.wasm.unityweb',
+      streamingAssetsUrl: 'StreamingAssets',
+      companyName: "Game and Disc",
+      productName: "L'Evasion",
+      productVersion: "1.0",
+      matchWebGLToCanvasSize: true,
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+    }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; })
+    .then(() => { document.querySelector('#chargement').remove(); canvas.focus(); })
+    .catch(m => { document.querySelector('#chargement span').textContent = m; });
+  </script>
+</body>
+</html>
