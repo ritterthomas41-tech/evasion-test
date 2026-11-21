@@ -17,17 +17,17 @@
 <body>
   <canvas id="unity-canvas" tabindex="-1"></canvas>
   <div id="chargement"><span>L'Evasion</span><div id="barre"><i></i></div></div>
-  <script src="Build/8bc794c3207983c3a4517fbe27edf932.loader.js"></script>
+  <script src="Build/a50b53198ed8b8e9ce3a52564caffc87.loader.js"></script>
   <script>
     const canvas = document.querySelector('#unity-canvas');
     createUnityInstance(canvas, {
-      dataUrl: 'Build/477480634f93d421aa7777ca60c5fb7e.data.unityweb',
+      dataUrl: 'Build/da839feb9339ace71b5ef9d3353179f5.data.unityweb',
       frameworkUrl: 'Build/de7825f3d38c8b7cc7e6bb940e56c9a2.framework.js.unityweb',
-      codeUrl: 'Build/1d4199f027494f3e12866692f87d553e.wasm.unityweb',
+      codeUrl: 'Build/de45c150ad13722003c93c195309e45a.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "21/11 10:37",
+      productVersion: "21/11 11:17",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
     }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; })
