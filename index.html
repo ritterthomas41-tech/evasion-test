@@ -21,13 +21,13 @@
   <script>
     const canvas = document.querySelector('#unity-canvas');
     createUnityInstance(canvas, {
-      dataUrl: 'Build/07ecc2b0945ad55cb66ab072d60517b9.data.unityweb',
+      dataUrl: 'Build/1b58cc14da0968f7b2dd717f93a3a7d7.data.unityweb',
       frameworkUrl: 'Build/8d742aee033c9581a3d8d650b5e8bc00.framework.js.unityweb',
       codeUrl: 'Build/152614fcad9704ae476eb23c0f40ab72.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "22/11 15:42",
+      productVersion: "22/11 16:05",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; })
