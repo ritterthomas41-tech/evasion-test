@@ -37,13 +37,13 @@
       } catch (e) { return Promise.resolve(); }
     }
     cgInit().then(function () { return createUnityInstance(canvas, {
-      dataUrl: 'Build/6cefe99495c1cb3c87ff652080e9b79d.data.unityweb',
+      dataUrl: 'Build/c9da22ec5574f231bcc0c1bc2cb29561.data.unityweb',
       frameworkUrl: 'Build/90df5a955febbc6849899b845512f9f4.framework.js.unityweb',
       codeUrl: 'Build/07e90a3879a1eed43139fdfe8ade5fc2.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "23/11 16:55",
+      productVersion: "23/11 17:04",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; }); })
