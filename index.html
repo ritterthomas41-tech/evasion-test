@@ -19,11 +19,11 @@
 <body>
   <canvas id="unity-canvas" tabindex="-1"></canvas>
   <div id="chargement"><span>L'Evasion</span><div id="barre"><i></i></div></div>
-  <script src="Build/05ff60127ed503ddc2b262742e92e2ca.loader.js"></script>
+  <script src="Build/ad04fa6c29a5aa462c301feda097dddb.loader.js"></script>
   <script>
     const canvas = document.querySelector('#unity-canvas');
     // 23/11 : le kit CrazyGames s'initialise AVANT le jeu (la sauvegarde lit son module de donnees des le lancement).
-    // Bloque par un bloqueur de pub, absent ou trop lent (4 s) : le jeu demarre quand meme, sans lui.
+    // Bloque par un bloqueur de pub, absent ou trop lent (8 s) : le jeu demarre quand meme, et il le guette encore 30 s (CrazyGames.cs).
     window.__cg = { pret: false, env: 'aucun' };
     function cgInit() {
       try {
@@ -33,17 +33,17 @@
           window.__cg.pret = window.__cg.env === 'local' || window.__cg.env === 'crazygames';
           if (window.__cg.pret) window.CrazyGames.SDK.game.loadingStart();
         }).catch(function (e) { console.log('[cg] init : ' + (e && e.message)); });
-        return Promise.race([init, new Promise(function (ok) { setTimeout(ok, 4000); })]);
+        return Promise.race([init, new Promise(function (ok) { setTimeout(ok, 8000); })]);
       } catch (e) { return Promise.resolve(); }
     }
     cgInit().then(function () { return createUnityInstance(canvas, {
-      dataUrl: 'Build/97cb8098858dbc394560413e3583bb93.data.unityweb',
+      dataUrl: 'Build/77ffbd10714291f3ce080cd1ee3e5a66.data.unityweb',
       frameworkUrl: 'Build/9d189d5ef4b86fc7152c3eeee9f16d23.framework.js.unityweb',
-      codeUrl: 'Build/ef1e9828619f84b3a40fcbe82b3856c9.wasm.unityweb',
+      codeUrl: 'Build/2b063f2ae5605b3f9846bc22c6dcd369.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "23/11 12:09",
+      productVersion: "23/11 12:37",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; }); })
