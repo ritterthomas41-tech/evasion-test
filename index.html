@@ -13,24 +13,40 @@
     #barre i { display: block; height: 100%; width: 0; background: #d9a514; }
     body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   </style>
+  <!-- 23/11 : le kit CrazyGames (SDK v3). Hors de CrazyGames et de localhost il est « disabled » : le jeu ne l'appelle pas. -->
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
 </head>
 <body>
   <canvas id="unity-canvas" tabindex="-1"></canvas>
   <div id="chargement"><span>L'Evasion</span><div id="barre"><i></i></div></div>
-  <script src="Build/5771e7e02af7979750c6367dc6b56601.loader.js"></script>
+  <script src="Build/05ff60127ed503ddc2b262742e92e2ca.loader.js"></script>
   <script>
     const canvas = document.querySelector('#unity-canvas');
-    createUnityInstance(canvas, {
-      dataUrl: 'Build/434b74b439808d78076bdc54393ef89a.data.unityweb',
-      frameworkUrl: 'Build/8d742aee033c9581a3d8d650b5e8bc00.framework.js.unityweb',
-      codeUrl: 'Build/17263e3e352fe4a57218812bf538f398.wasm.unityweb',
+    // 23/11 : le kit CrazyGames s'initialise AVANT le jeu (la sauvegarde lit son module de donnees des le lancement).
+    // Bloque par un bloqueur de pub, absent ou trop lent (4 s) : le jeu demarre quand meme, sans lui.
+    window.__cg = { pret: false, env: 'aucun' };
+    function cgInit() {
+      try {
+        if (!window.CrazyGames || !window.CrazyGames.SDK) return Promise.resolve();
+        var init = window.CrazyGames.SDK.init().then(function () {
+          window.__cg.env = window.CrazyGames.SDK.environment;
+          window.__cg.pret = window.__cg.env === 'local' || window.__cg.env === 'crazygames';
+          if (window.__cg.pret) window.CrazyGames.SDK.game.loadingStart();
+        }).catch(function (e) { console.log('[cg] init : ' + (e && e.message)); });
+        return Promise.race([init, new Promise(function (ok) { setTimeout(ok, 4000); })]);
+      } catch (e) { return Promise.resolve(); }
+    }
+    cgInit().then(function () { return createUnityInstance(canvas, {
+      dataUrl: 'Build/97cb8098858dbc394560413e3583bb93.data.unityweb',
+      frameworkUrl: 'Build/9d189d5ef4b86fc7152c3eeee9f16d23.framework.js.unityweb',
+      codeUrl: 'Build/ef1e9828619f84b3a40fcbe82b3856c9.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "23/11 11:29",
+      productVersion: "23/11 12:09",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
-    }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; })
+    }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; }); })
     .then(() => { document.querySelector('#chargement').remove(); canvas.focus(); })
     .catch(m => { document.querySelector('#chargement span').textContent = m; });
   </script>
