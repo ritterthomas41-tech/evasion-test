@@ -19,7 +19,7 @@
 <body>
   <canvas id="unity-canvas" tabindex="-1"></canvas>
   <div id="chargement"><span>L'Evasion</span><div id="barre"><i></i></div></div>
-  <script src="Build/d629ad2e47374e2c1de71db18b3ada2b.loader.js"></script>
+  <script src="Build/1e623261d1cb790214c99ad9142b246c.loader.js"></script>
   <script>
     const canvas = document.querySelector('#unity-canvas');
     // 23/11 : le kit CrazyGames s'initialise AVANT le jeu (la sauvegarde lit son module de donnees des le lancement).
@@ -37,13 +37,13 @@
       } catch (e) { return Promise.resolve(); }
     }
     cgInit().then(function () { return createUnityInstance(canvas, {
-      dataUrl: 'Build/f566e9d87eadb5df5c5c66b65bd09d1d.data.unityweb',
+      dataUrl: 'Build/3130ee3c58af21e1a61b3bd452032308.data.unityweb',
       frameworkUrl: 'Build/90df5a955febbc6849899b845512f9f4.framework.js.unityweb',
-      codeUrl: 'Build/9cba943bc9f1231415c2ccbf25e9f66e.wasm.unityweb',
+      codeUrl: 'Build/5b093badf6e7a726f3bd5061abbad57c.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "23/11 18:17",
+      productVersion: "23/11 22:05",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; }); })
