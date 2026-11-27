@@ -39,74 +39,129 @@
     // et quand le navigateur le permet (plein ecran, Android), on verrouille l ecran en paysage au premier toucher
     document.addEventListener('touchend', function () { try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {}); } catch (e) {} }, { once: true });
   </script>
-  <div id="chargement"><canvas id="anim" width="100" height="64"></canvas><span>LOADING...</span><div id="barre"></div><div id="astuce"></div></div>
+  <div id="chargement"><canvas id="anim" width="120" height="76"></canvas><span>LOADING...</span><div id="barre"></div><div id="astuce"></div></div>
   <!-- 28/11 (SA demande : « une petite animation au chargement pour paraitre moins cheap », idee 1) : la cuillere du jeu tape
        un bloc de brique qui se fissure, eclate en petits cubes, et un nouveau bloc tombe. Dessine en pixels, sans attendre le jeu. -->
   <script>
   (function () {
     var cv = document.getElementById('anim'); if (!cv) return;
-    var g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-    var W = 100, H = 64;
+    var g = cv.getContext('2d');
+    var W = 120, H = 76; cv.width = W; cv.height = H; g.imageSmoothingEnabled = false;
+    // 28/11 (SA demande : « rends l animation plus juicy ») : trois familles d effets, chacune activable seule
+    //   m = MOUVEMENT (le bloc s ecrase et rebondit a chaque coup, la cuillere laisse une trainee, le nouveau bloc s etire en tombant et s ecrase a l arrivee)
+    //   i = IMPACT (eclair blanc sur le bloc, etoile au point de contact, plus d etincelles, l image tremble)
+    //   e = ECLAT (flash, onde de choc, nuage de poussiere, plus de cubes qui tournent)
+    var q = location.search, mj = q.match(/jus=([a-z]*)/), JUS = mj ? mj[1] : 'mie';
+    var J = { mvt: JUS.indexOf('m') >= 0, imp: JUS.indexOf('i') >= 0, ecl: JUS.indexOf('e') >= 0 };
     var cuil = new Image(), bloc = new Image();
     cuil.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADOElEQVR4nMWXX0hTURzHv+fOJagFkoYudEsN7E1zFpGUTqWefF0vIdhT0EN/LCiF9FWitiX0aCTIRpvbc2VRToxIE3u2e9eD9JSQGCrtnvidu3vddTPmvFtfkXt37tn5/M7v9zu/+xvwn8WKxOFmJDe4UjHgCVmGosiQ5RUMDFwDYyzNoMKK60rIMpflFa4oMh8bG+OAZkRJoXeuq97lQiKhYHDwnmmSVCg4uZz0XVGMwa6L3elTCmYA13dOqUb/tPMGVyPa2tuQTCYRi0bpMSt0CESUyYBuT6+Ak6ICvnMKWCFcr+e4ChU93ZfQeroV4fDLrExmJTwQ8Iubvr4+cK6it+cyWlpb9oRbaADjgYDPNBLwj6fgYVRWVmJt7WdWlmSNAea64vc9Tds5Z3vBrTLAcL0Op5hHIuGcPMwKAU/FPKe1JavhdMZLS0tzXkTKF+71XjElnLvdjUg4DFVVsbW1lbNnWQ5TMt5cXq9XVDSbzYaFzwtoc7chFAruY82cDGCcMYYnjx9BstlMT9RkEvG5eSx9WUrBQ/pJ2HdOseyjjAf8PiO22hCjd6u43rhxXYzNf/yU9851lWSyGff7fQJMMIotqd5Zb8wZH38mjNje3s7ocPYrtovOJ19MYuThiMhoijGBq6uqUFvrME0dHRkVRty8dTtznbw8wBgPBoMYfjAsdl3rcOBY9VHU1jjQ5ek0fWl2dk6EwwpJGluDD90fEknV1NSIhhNO1NU54enq1F6rXIXT6RLXjo5z4ss1juOQpIMVU0m7MJw94xYx13W44ggudJwX9/+MMLfCA0ittcutauqPPOByNYjOhjEJns5ezLx9jVAwBPWAoZAEKMsiJXY74vF5SJCMtorcT93Nu/czmJh4jljM3N3knYQlqUJDIaDKpqu5+RQ+xOdgP2QX+UHPaecEX17+Si47CFtjAkBZWTnf3NxEMvkHTY0njVzQCw/pzcwrEYo7d7W2eno6QnX/wA0NM24Y4+XlFVhf/yU+K8o3w/2kqakpLC4uaV1tLErGWdJNsfQP5Ak6Vv39V7G6+kOMUTEi6E5HS7IGnmFAuhG/NzbECaMw6GddVZPF+jFbPP0FD6ZgBQxUNAoAAAAASUVORK5CYII=';
     bloc.src = window.__bloc = 'data:image/png;base64,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';
-    function taille() { var s = Math.max(2, Math.floor(Math.min(innerWidth * 0.34 / W, innerHeight * 0.3 / H))); cv.style.width = (W * s) + 'px'; cv.style.height = (H * s) + 'px'; }
+    var blanc = document.createElement('canvas'); blanc.width = blanc.height = 48;   // la silhouette blanche du bloc (l eclair)
+    bloc.onload = function () { var b = blanc.getContext('2d'); b.drawImage(bloc, 0, 0); b.globalCompositeOperation = 'source-in'; b.fillStyle = '#fff'; b.fillRect(0, 0, 48, 48); };
+    function taille() { var s = Math.max(2, Math.floor(Math.min(innerWidth * 0.4 / W, innerHeight * 0.34 / H))); cv.style.width = (W * s) + 'px'; cv.style.height = (H * s) + 'px'; }
     taille(); addEventListener('resize', taille);
-    // le bloc (48 px) et la cuillere (32 px, x1,5) qui pivote sur le bout de son manche
-    var BX = 38, BY = 13, PX = 21, PY = 59, ECH = 1.5;
+    var OX = 10, OY = 6, SOL = OY + 64;
+    var BX = 38 + OX, BY = 13 + OY, PX = 21 + OX, PY = 59 + OY, ECH = 1.5;
     var A_HAUT = 128 * Math.PI / 180, A_COUP = 177 * Math.PI / 180;
     var COUP = 0.5, NB = 4, ECLAT = 0.7, CHUTE = 0.4, CYCLE = COUP * NB + ECLAT + CHUTE;
-    var FISSURES = [   // les fissures qui grandissent a chaque coup (segments en pixels du bloc)
+    var FISSURES = [
       [[11, 15, 17, 19], [17, 19, 16, 25]],
       [[17, 19, 24, 21], [16, 25, 21, 30], [24, 21, 26, 28]],
       [[24, 21, 31, 17], [21, 30, 19, 36], [26, 28, 33, 32], [31, 17, 35, 21]]
     ];
     var COUL = ['#e2c393', '#c99d66', '#a8794a', '#f1dcb2', '#7d5230'];
-    var cubes = [], etin = [], dernierCoup = -1, eclate = false, t0 = performance.now();
+    var cubes = [], etin = [], poussiere = [], dernierCoup = -1, eclate = false, tHit = -9, tFin = -9, tPose = -9, posee = true;
     function lisse(x) { return x * x * (3 - 2 * x); }
+    function ressort(t) { return t < 0 ? 0 : Math.exp(-t * 16) * Math.cos(t * 38); }
     function ligne(x0, y0, x1, y1) { var n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (var i = 0; i <= n; i++) g.fillRect(Math.round(x0 + (x1 - x0) * i / n), Math.round(y0 + (y1 - y0) * i / n), 1, 1); }
-    function image(now) {
-      if (!cv.isConnected) return;
-      var t = ((now - t0) / 1000) % CYCLE, tc = (now - t0) / 1000, cyc = Math.floor(tc / CYCLE);
-      g.clearRect(0, 0, W, H);
+    function angle(f) { return A_HAUT + (A_COUP - A_HAUT) * f; }
+    function dessinerCuillere(f, a) { g.save(); g.globalAlpha = a; g.translate(PX, PY); g.rotate(angle(f)); g.scale(ECH, ECH); g.drawImage(cuil, -27, -4); g.restore(); }
+    function rendu(tc, dt) {
+      var t = tc % CYCLE, cyc = Math.floor(tc / CYCLE);
       var k = Math.min(NB - 1, Math.floor(t / COUP)), u = (t - k * COUP) / COUP, enCoups = t < COUP * NB;
-      // l angle de la cuillere : elle remonte, puis s abat d un coup sec
       var f = 1;
       if (enCoups) f = u < 0.45 ? 1 - lisse(u / 0.45) : u < 0.7 ? Math.pow((u - 0.45) / 0.25, 2) : 1;
       else { var r = (t - COUP * NB) / (ECLAT + CHUTE); f = 1 - lisse(Math.min(1, r * 1.6)); }
       // le coup porte
       var idCoup = cyc * NB + k;
       if (enCoups && u >= 0.7 && dernierCoup !== idCoup) {
-        dernierCoup = idCoup;
-        for (var i = 0; i < 7; i++) { var a = Math.PI * (0.6 + Math.random() * 0.9); etin.push({ x: BX + 10, y: BY + 15, vx: Math.cos(a) * (25 + Math.random() * 30), vy: -Math.abs(Math.sin(a)) * (20 + Math.random() * 30), v: 0 }); }
-        if (k === NB - 1) {   // le dernier coup : le bloc eclate
-          eclate = true;
-          for (var c = 0; c < 18; c++) cubes.push({ x: BX + 10 + Math.random() * 26, y: BY + 8 + Math.random() * 30, vx: (Math.random() - 0.35) * 70, vy: -20 - Math.random() * 45, s: 2 + Math.floor(Math.random() * 3), c: COUL[c % COUL.length], v: 0 });
+        dernierCoup = idCoup; tHit = tc;
+        var ne = J.imp ? 14 : 7;
+        for (var i = 0; i < ne; i++) { var a = Math.PI * (0.6 + Math.random() * 0.9), v = J.imp ? 40 + Math.random() * 45 : 25 + Math.random() * 30; etin.push({ x: BX + 10, y: BY + 15, vx: Math.cos(a) * v, vy: -Math.abs(Math.sin(a)) * v * (J.imp ? 0.9 : 0.8), v: 0, s: J.imp && i < 5 ? 2 : 1 }); }
+        if (k === NB - 1) {
+          eclate = true; tFin = tc; posee = false;
+          var nc = J.ecl ? 28 : 18;
+          for (var c = 0; c < nc; c++) cubes.push({ x: BX + 10 + Math.random() * 26, y: BY + 8 + Math.random() * 30, vx: (Math.random() - 0.35) * (J.ecl ? 95 : 70), vy: -20 - Math.random() * (J.ecl ? 65 : 45), s: 2 + Math.floor(Math.random() * (J.ecl ? 4 : 3)), c: COUL[c % COUL.length], v: 0, r: Math.random() * 6, vr: (Math.random() - 0.5) * 18 });
+          if (J.ecl) for (var d = 0; d < 7; d++) poussiere.push({ x: BX + 14 + Math.random() * 20, y: BY + 20 + Math.random() * 18, vx: (Math.random() - 0.5) * 20, vy: -6 - Math.random() * 8, v: 0 });
         }
       }
       if (t < COUP * 0.1) eclate = false;
-      // le bloc : il tremble au coup, se fissure, eclate ; puis le suivant tombe en rebondissant
-      var bx = BX, by = BY, visible = !eclate;
-      if (enCoups && u >= 0.7 && u < 0.85) bx += (u < 0.78 ? 2 : -1);
-      if (!enCoups) { var tch = t - COUP * NB - ECLAT; visible = tch >= 0; if (visible) { var q = Math.min(1, tch / CHUTE); by = BY - (1 - (q < 0.7 ? lisse(q / 0.7) : 1 - Math.sin((q - 0.7) / 0.3 * Math.PI) * 0.08)) * 60; } }
+      // la secousse de l image (impact)
+      var sh = 0, ah = tc - tHit;
+      if (J.imp && ah < 0.12) sh = (k === NB - 1 || !enCoups ? 3 : 2) * (1 - ah / 0.12);
+      g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+      g.setTransform(1, 0, 0, 1, Math.round((Math.random() * 2 - 1) * sh), Math.round((Math.random() * 2 - 1) * sh));
+      // le bloc
+      var bx = BX, by = BY, visible = !eclate, sx = 1, sy = 1;
+      if (!J.mvt && enCoups && u >= 0.7 && u < 0.85) bx += (u < 0.78 ? 2 : -1);
+      if (J.mvt && visible && enCoups) { var rs = ressort(tc - tHit); sx = 1 - 0.16 * rs; sy = 1 + 0.12 * rs; }
+      if (!enCoups) {
+        var tch = t - COUP * NB - ECLAT; visible = tch >= 0;
+        if (visible) {
+          var qq = Math.min(1, tch / CHUTE);
+          by = BY - (1 - (qq < 0.7 ? lisse(qq / 0.7) : 1 - Math.sin((qq - 0.7) / 0.3 * Math.PI) * 0.08)) * 60;
+          if (J.mvt) { if (qq < 0.7) { sx = 0.88; sy = 1.14; } else { if (!posee) { posee = true; tPose = tc; } var rp = ressort(tc - tPose); sx = 1 + 0.2 * rp; sy = 1 - 0.18 * rp; } }
+        }
+      }
       if (visible && bloc.complete) {
-        g.drawImage(bloc, Math.round(bx), Math.round(by));
+        g.save(); g.translate(bx + 24, by + 39); g.scale(sx, sy); g.translate(-24, -39);
+        g.drawImage(bloc, 0, 0);
         var stade = enCoups ? (u >= 0.7 ? k + 1 : k) : 0;
         g.fillStyle = 'rgba(40,22,10,0.85)';
-        for (var s = 0; s < Math.min(stade, FISSURES.length); s++) for (var j = 0; j < FISSURES[s].length; j++) { var L = FISSURES[s][j]; ligne(bx + L[0], by + L[1], bx + L[2], by + L[3]); }
+        for (var s = 0; s < Math.min(stade, FISSURES.length); s++) for (var j = 0; j < FISSURES[s].length; j++) { var L = FISSURES[s][j]; ligne(L[0], L[1], L[2], L[3]); }
+        if (J.imp && enCoups && ah < 0.08) { g.globalAlpha = 0.85 * (1 - ah / 0.08); g.drawImage(blanc, 0, 0); g.globalAlpha = 1; }   // l eclair blanc
+        g.restore();
       }
-      // les petits cubes du bloc eclate, et les etincelles du coup
-      var dt = 1 / 60;
-      for (var i2 = cubes.length - 1; i2 >= 0; i2--) { var b = cubes[i2]; b.v += dt; b.vy += 160 * dt; b.x += b.vx * dt; b.y += b.vy * dt; if (b.y > H - b.s) { b.y = H - b.s; b.vy *= -0.35; b.vx *= 0.7; }
-        if (b.v > ECLAT + CHUTE * 0.6) { cubes.splice(i2, 1); continue; } g.globalAlpha = Math.max(0, 1 - Math.max(0, b.v - ECLAT * 0.6) / (ECLAT * 0.6)); g.fillStyle = b.c; g.fillRect(Math.round(b.x), Math.round(b.y), b.s, b.s); g.fillStyle = 'rgba(0,0,0,0.35)'; g.fillRect(Math.round(b.x), Math.round(b.y) + b.s - 1, b.s, 1); }
-      for (var i3 = etin.length - 1; i3 >= 0; i3--) { var e = etin[i3]; e.v += dt; e.vy += 120 * dt; e.x += e.vx * dt; e.y += e.vy * dt; if (e.v > 0.3) { etin.splice(i3, 1); continue; } g.globalAlpha = 1 - e.v / 0.3; g.fillStyle = e.v < 0.1 ? '#ffffff' : '#ffd23f'; g.fillRect(Math.round(e.x), Math.round(e.y), 1, 1); }
+      // l etoile au point de contact (impact)
+      if (J.imp && ah < 0.1 && (enCoups || tc - tFin < 0.1)) {
+        var lg = Math.round(3 + 6 * (ah / 0.1)); g.fillStyle = ah < 0.05 ? '#ffffff' : '#ffe27a';
+        var cx = BX + 9, cy = BY + 15;
+        for (var e1 = 2; e1 <= lg; e1++) { g.fillRect(cx - e1, cy, 1, 1); g.fillRect(cx, cy - e1, 1, 1); g.fillRect(cx, cy + e1, 1, 1); if (e1 < lg - 2) { g.fillRect(cx - e1, cy - e1, 1, 1); g.fillRect(cx - e1, cy + e1, 1, 1); } }
+      }
+      // l eclat : onde de choc + flash (eclat)
+      var af = tc - tFin;
+      if (J.ecl && af < 0.3) {
+        g.strokeStyle = 'rgba(255,240,190,' + (1 - af / 0.3) + ')'; g.lineWidth = 2;
+        g.beginPath(); g.arc(BX + 24, BY + 24, 6 + 34 * Math.sqrt(af / 0.3), 0, Math.PI * 2); g.stroke();
+      }
+      // la poussiere (eclat)
+      for (var p2 = poussiere.length - 1; p2 >= 0; p2--) { var o = poussiere[p2]; o.v += dt; o.x += o.vx * dt; o.y += o.vy * dt; if (o.v > 0.6) { poussiere.splice(p2, 1); continue; }
+        g.globalAlpha = 0.55 * (1 - o.v / 0.6); g.fillStyle = '#9a8a78'; var rr = 3 + 7 * (o.v / 0.6); g.beginPath(); g.arc(o.x, o.y, rr, 0, Math.PI * 2); g.fill(); }
       g.globalAlpha = 1;
-      // la cuillere (dessinee par-dessus le bloc)
+      // les cubes et les etincelles
+      for (var i2 = cubes.length - 1; i2 >= 0; i2--) { var b = cubes[i2]; b.v += dt; b.vy += 160 * dt; b.x += b.vx * dt; b.y += b.vy * dt; b.r += b.vr * dt; if (b.y > SOL - b.s) { b.y = SOL - b.s; b.vy *= -0.35; b.vx *= 0.7; b.vr *= 0.5; }
+        if (b.v > ECLAT + CHUTE * 0.6) { cubes.splice(i2, 1); continue; }
+        g.globalAlpha = Math.max(0, 1 - Math.max(0, b.v - ECLAT * 0.6) / (ECLAT * 0.6));
+        if (J.ecl) { g.save(); g.translate(Math.round(b.x) + b.s / 2, Math.round(b.y) + b.s / 2); g.rotate(b.r); g.fillStyle = b.c; g.fillRect(-b.s / 2, -b.s / 2, b.s, b.s); g.restore(); }
+        else { g.fillStyle = b.c; g.fillRect(Math.round(b.x), Math.round(b.y), b.s, b.s); g.fillStyle = 'rgba(0,0,0,0.35)'; g.fillRect(Math.round(b.x), Math.round(b.y) + b.s - 1, b.s, 1); } }
+      var vie = J.imp ? 0.4 : 0.3;
+      for (var i3 = etin.length - 1; i3 >= 0; i3--) { var e = etin[i3]; e.v += dt; e.vy += 120 * dt; e.x += e.vx * dt; e.y += e.vy * dt; if (e.v > vie) { etin.splice(i3, 1); continue; } g.globalAlpha = 1 - e.v / vie; g.fillStyle = e.v < 0.1 ? '#ffffff' : e.v < 0.22 ? '#ffd23f' : '#ff8a2a'; g.fillRect(Math.round(e.x), Math.round(e.y), e.s, e.s); }
+      g.globalAlpha = 1;
+      // la cuillere, et sa trainee quand elle s abat (mouvement)
       if (cuil.complete) {
-        var ang = A_HAUT + (A_COUP - A_HAUT) * f;
-        g.save(); g.translate(PX, PY); g.rotate(ang); g.scale(ECH, ECH);
-        g.drawImage(cuil, -27, -4); g.restore();
+        if (J.mvt && enCoups && u >= 0.5 && u < 0.78) { dessinerCuillere(Math.max(0, f - 0.4), 0.18); dessinerCuillere(Math.max(0, f - 0.2), 0.35); }
+        dessinerCuillere(f, 1);
       }
+      // le flash de l eclat (eclat)
+      if (J.ecl && af < 0.1) { var lu = g.createRadialGradient(BX + 24, BY + 24, 0, BX + 24, BY + 24, 34); lu.addColorStop(0, 'rgba(255,250,225,' + 0.9 * (1 - af / 0.1) + ')'); lu.addColorStop(1, 'rgba(255,250,225,0)'); g.fillStyle = lu; g.beginPath(); g.arc(BX + 24, BY + 24, 34, 0, Math.PI * 2); g.fill(); }
+      g.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    if (/[?&]film/.test(q)) { window.__animer = function (tc) { rendu(tc, 1 / 30); }; return; }   // (le banc filme image par image)
+    var t0 = performance.now(), avant = t0;
+    function image(now) {
+      if (!cv.isConnected) return;
+      var dt = Math.min(0.05, (now - avant) / 1000); avant = now;
+      rendu((now - t0) / 1000, dt);
       requestAnimationFrame(image);
     }
     requestAnimationFrame(image);
@@ -158,13 +213,13 @@
       } catch (e) { return Promise.resolve(); }
     }
     cgInit().then(function () { return createUnityInstance(canvas, {
-      dataUrl: 'Build/10a73b36707a1851411e0d23773eec63.data.unityweb',
+      dataUrl: 'Build/5eddcf3f77cd5af0dbfc6cb0351b9194.data.unityweb',
       frameworkUrl: 'Build/adea14720bf5e1f82005de9f1d527fdb.framework.js.unityweb',
       codeUrl: 'Build/e45fa94d9b663381850dcc3636898a4b.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "27/11 16:50",
+      productVersion: "27/11 17:02",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { window.__progres(p); }); })
