@@ -7,9 +7,11 @@
   <style>
     html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #070606; }
     #unity-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; touch-action: none; outline: none; background: #070606; }
-    #chargement { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-                  color: #efe7dc; font: 700 20px system-ui, sans-serif; letter-spacing: .04em; }
-    #barre { width: min(60vw, 360px); height: 10px; background: #2a2420; border-radius: 6px; overflow: hidden; }
+    /* 28/11 (SA demande : « une petite image au chargement ») : la miniature, en entier, et la barre par-dessus en bas */
+    #chargement { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 7vh; box-sizing: border-box;
+                  background: #070606 url('chargement.jpg') center top / cover no-repeat; color: #efe7dc; font: 700 16px system-ui, sans-serif; letter-spacing: .04em; }
+    #chargement span { background: rgba(0,0,0,.55); padding: 4px 12px; border-radius: 6px; margin-bottom: 10px; }
+    #barre { width: min(60vw, 420px); height: 12px; background: rgba(20,16,14,.85); border: 2px solid #4a2a10; border-radius: 8px; overflow: hidden; }
     #barre i { display: block; height: 100%; width: 0; background: #d9a514; }
     body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   </style>
@@ -18,8 +20,8 @@
 </head>
 <body>
   <canvas id="unity-canvas" tabindex="-1"></canvas>
-  <div id="chargement"><span>L'Evasion</span><div id="barre"><i></i></div></div>
-  <script src="Build/14bd87048b17bb1fad6e2f609418dae9.loader.js"></script>
+  <div id="chargement"><span>LOADING...</span><div id="barre"><i></i></div></div>
+  <script src="Build/e396197d6fb0f32fd5e0498b54074616.loader.js"></script>
   <script>
     const canvas = document.querySelector('#unity-canvas');
     // 23/11 : le kit CrazyGames s'initialise AVANT le jeu (la sauvegarde lit son module de donnees des le lancement).
@@ -37,13 +39,13 @@
       } catch (e) { return Promise.resolve(); }
     }
     cgInit().then(function () { return createUnityInstance(canvas, {
-      dataUrl: 'Build/00fb02f4482e974cd1857288f2142952.data.unityweb',
+      dataUrl: 'Build/effd7a68c9ca218e33a7518b57dcb202.data.unityweb',
       frameworkUrl: 'Build/adea14720bf5e1f82005de9f1d527fdb.framework.js.unityweb',
-      codeUrl: 'Build/1a167dca07a5e41d8ccd7d05237dda16.wasm.unityweb',
+      codeUrl: 'Build/fd2648f4646d7d57f230527b64765561.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "27/11 02:11",
+      productVersion: "27/11 12:39",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; }); })
