@@ -14,14 +14,26 @@
     #barre { width: min(60vw, 420px); height: 12px; background: rgba(20,16,14,.85); border: 2px solid #4a2a10; border-radius: 8px; overflow: hidden; }
     #barre i { display: block; height: 100%; width: 0; background: #d9a514; }
     body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+    /* 28/11 (SA demande : « desactive le mode portrait sur mobile ») : au doigt et en portrait, un ecran « tourne ton telephone » */
+    #tourne { display: none; position: fixed; inset: 0; z-index: 20; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+              background: rgba(7,6,6,.93); color: #ffd23f; font: 800 22px system-ui, sans-serif; text-align: center; letter-spacing: .04em; padding: 24px; box-sizing: border-box; }
+    #tourne .tel { width: 54px; height: 92px; border: 5px solid #ffd23f; border-radius: 10px; animation: tourne 1.6s ease-in-out infinite; }
+    #tourne small { color: #efe7dc; font-weight: 600; font-size: 15px; }
+    @keyframes tourne { 0%, 25% { transform: rotate(0deg); } 60%, 100% { transform: rotate(-90deg); } }
+    @media (orientation: portrait) and (pointer: coarse) { #tourne { display: flex; } }
   </style>
   <!-- 23/11 : le kit CrazyGames (SDK v3). Hors de CrazyGames et de localhost il est « disabled » : le jeu ne l'appelle pas. -->
   <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
 </head>
 <body>
   <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="tourne"><div class="tel"></div><div>ROTATE YOUR PHONE</div><small>Spoonbreak is played in landscape</small></div>
+  <script>
+    // et quand le navigateur le permet (plein ecran, Android), on verrouille l ecran en paysage au premier toucher
+    document.addEventListener('touchend', function () { try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {}); } catch (e) {} }, { once: true });
+  </script>
   <div id="chargement"><span>LOADING...</span><div id="barre"><i></i></div></div>
-  <script src="Build/e396197d6fb0f32fd5e0498b54074616.loader.js"></script>
+  <script src="Build/c9e57f4476778455f195a390bedabd18.loader.js"></script>
   <script>
     const canvas = document.querySelector('#unity-canvas');
     // 23/11 : le kit CrazyGames s'initialise AVANT le jeu (la sauvegarde lit son module de donnees des le lancement).
@@ -39,13 +51,13 @@
       } catch (e) { return Promise.resolve(); }
     }
     cgInit().then(function () { return createUnityInstance(canvas, {
-      dataUrl: 'Build/effd7a68c9ca218e33a7518b57dcb202.data.unityweb',
+      dataUrl: 'Build/965fa3f888d7b694ebe2d734429d9074.data.unityweb',
       frameworkUrl: 'Build/adea14720bf5e1f82005de9f1d527fdb.framework.js.unityweb',
-      codeUrl: 'Build/fd2648f4646d7d57f230527b64765561.wasm.unityweb',
+      codeUrl: 'Build/7190fd1c35fd099013bdd1da398fd0b8.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "27/11 12:39",
+      productVersion: "27/11 12:55",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { document.querySelector('#barre i').style.width = (100 * p) + '%'; }); })
