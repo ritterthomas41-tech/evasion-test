@@ -195,7 +195,7 @@
     }, 3500);
   })();
   </script>
-  <script src="Build/8fac06ad7ca89b9a60215eb4bc859037.loader.js"></script>
+  <script src="Build/b39d3bb967cddea1229eac054cb3be82.loader.js"></script>
   <script>
     const canvas = document.querySelector('#unity-canvas');
     // 23/11 : le kit CrazyGames s'initialise AVANT le jeu (la sauvegarde lit son module de donnees des le lancement).
@@ -213,13 +213,13 @@
       } catch (e) { return Promise.resolve(); }
     }
     cgInit().then(function () { return createUnityInstance(canvas, {
-      dataUrl: 'Build/1a535fb13b54cdd95cdffee5ad405fb6.data.unityweb',
+      dataUrl: 'Build/0f4672b72a0ebb33b3dc0bda6fbe3674.data.unityweb',
       frameworkUrl: 'Build/adea14720bf5e1f82005de9f1d527fdb.framework.js.unityweb',
-      codeUrl: 'Build/def612237e8a9b22eaf225f4314ee5a2.wasm.unityweb',
+      codeUrl: 'Build/1be08f83fae1ee6c06177c8863fdea53.wasm.unityweb',
       streamingAssetsUrl: 'StreamingAssets',
       companyName: "Game and Disc",
       productName: "L'Evasion",
-      productVersion: "27/11 19:27",
+      productVersion: "27/11 19:43",
       matchWebGLToCanvasSize: true,
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ? 1.5 : 2),   // 22/11 : 1,5 sur telephone (fluidite)
     }, p => { window.__progres(p); }); })
